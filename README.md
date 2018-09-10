@@ -25,3 +25,7 @@ int main() {
 
 In order to hit precision objectives in [cste_math](https://github.com/VecPP/cste_math), 
 we need to be able to compute values of sizes that are not available with the core types.
+
+## Acknowledgements
+
+The implementation details are heavily inspired from `llvm::APInt` and `llvm::APFloat`.

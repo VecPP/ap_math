@@ -34,15 +34,15 @@ namespace vecpp {
       return v_;
     }
 
-    constexpr void clearUnusedBits() {
+    constexpr Simple_ap_int_impl& clear_unused_bits() {
       constexpr Storage storage_max = ~Storage(0);
       constexpr Storage mask = storage_max >> (storage_bits - bits);
-      v_ = v_ & mask;
+      v_ &= mask;
+      return *this;
     }
 
     Storage v_;
   };
-
 
   template<std::size_t bits, typename Storage>
   constexpr Simple_ap_int_impl<bits, Storage> operator+(Simple_ap_int_impl<bits, Storage> lhs, Simple_ap_int_impl<bits, Storage> rhs) {
@@ -53,10 +53,8 @@ namespace vecpp {
   template<std::size_t bits, typename Storage>
   constexpr Simple_ap_int_impl<bits, Storage>& operator+=(Simple_ap_int_impl<bits, Storage>& lhs, Simple_ap_int_impl<bits, Storage> rhs) {
     lhs.v_ += rhs.v_;
-    lhs.clearUnusedBits();
-    return lhs;
+    return lhs.clear_unused_bits();
   }
-
 
   template<std::size_t bits, typename Storage>
   std::ostream& operator<<(std::ostream& stream, Simple_ap_int_impl<bits, Storage> val) {
@@ -66,7 +64,6 @@ namespace vecpp {
     else {
       return stream << val.v_;
     }
-
   }
 }
 

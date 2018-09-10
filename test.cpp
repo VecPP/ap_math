@@ -4,10 +4,11 @@
 
 int main() {
 
-  vecpp::Ap_int<3> a = 1;
-  vecpp::Ap_int<3> b = 2;
+  vecpp::Ap_int<120> a{0xFFFFFFFF};
+  vecpp::Ap_int<120> b{0xFFFFFFFF};
+
   for(int i = 0 ; i < 20; ++i) {
-    a = a + b;
+    a += b;
     std::cout << a << "\n";
   }
 

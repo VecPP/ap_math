@@ -100,7 +100,8 @@ struct Large_ap_int {
  private:
   using Word = std::uint64_t;
   static constexpr std::size_t bits_per_word_ = sizeof(Word) * CHAR_BIT;
-  static constexpr std::size_t last_word_bits = ((bits - 1) % bits_per_word_) + 1;
+  static constexpr std::size_t last_word_bits =
+      ((bits - 1) % bits_per_word_) + 1;
   static constexpr std::size_t words_ = 1 + (bits - 1) / bits_per_word_;
   static_assert(words_ >= 2);
 
@@ -128,13 +129,11 @@ struct Large_ap_int {
   }
 
   static constexpr Word low_half(Word v) {
-    auto mask = (~(Word)0) >> (Word)(bits_per_word_/2);
+    auto mask = (~(Word)0) >> (Word)(bits_per_word_ / 2);
     return v & mask;
   }
 
-  static constexpr Word high_half(Word v) {
-    return v >> (bits_per_word_ / 2);
-  }
+  static constexpr Word high_half(Word v) { return v >> (bits_per_word_ / 2); }
 
   constexpr bool is_negative() const { return get_bit(bits - 1); }
   constexpr const Word& operator[](std::size_t i) const { return v_[i]; }
@@ -205,15 +204,15 @@ constexpr int Large_ap_int<bits>::compare(Operand rhs) const {
     return l_neg ? -1 : 1;
   }
 
-  if(l_neg) {
+  if (l_neg) {
     Word last_word_cmp = (1 << last_word_bits) - 1;
-    if(v_.back() != last_word_cmp) {
+    if (v_.back() != last_word_cmp) {
       return -1;
     }
 
-    std::size_t parts = words_-2;
-    while (parts>0) {
-      if(v_[parts] != std::numeric_limits<Word>::max()) {
+    std::size_t parts = words_ - 2;
+    while (parts > 0) {
+      if (v_[parts] != std::numeric_limits<Word>::max()) {
         return -1;
       }
     }
@@ -221,11 +220,10 @@ constexpr int Large_ap_int<bits>::compare(Operand rhs) const {
       return 0;
     }
     return v_[0] > Word(rhs) ? 1 : -1;
-  }
-  else {
-    std::size_t parts = words_-1;
-    while (parts>0) {
-      if(v_[parts] != 0) {
+  } else {
+    std::size_t parts = words_ - 1;
+    while (parts > 0) {
+      if (v_[parts] != 0) {
         return 1;
       }
       --parts;
@@ -274,32 +272,32 @@ constexpr bool Large_ap_int<bits>::operator>=(
 }
 
 template <std::size_t bits>
-constexpr bool Large_ap_int<bits>::operator==(Operand rhs) const{
+constexpr bool Large_ap_int<bits>::operator==(Operand rhs) const {
   return compare(rhs) == 0;
 }
 
 template <std::size_t bits>
-constexpr bool Large_ap_int<bits>::operator!=(Operand rhs) const{
+constexpr bool Large_ap_int<bits>::operator!=(Operand rhs) const {
   return compare(rhs) != 0;
 }
 
 template <std::size_t bits>
-constexpr bool Large_ap_int<bits>::operator<(Operand rhs) const{
+constexpr bool Large_ap_int<bits>::operator<(Operand rhs) const {
   return compare(rhs) < 0;
 }
 
 template <std::size_t bits>
-constexpr bool Large_ap_int<bits>::operator<=(Operand rhs) const{
+constexpr bool Large_ap_int<bits>::operator<=(Operand rhs) const {
   return compare(rhs) <= 0;
 }
 
 template <std::size_t bits>
-constexpr bool Large_ap_int<bits>::operator>(Operand rhs) const{
+constexpr bool Large_ap_int<bits>::operator>(Operand rhs) const {
   return compare(rhs) > 0;
 }
 
 template <std::size_t bits>
-constexpr bool Large_ap_int<bits>::operator>=(Operand rhs) const{
+constexpr bool Large_ap_int<bits>::operator>=(Operand rhs) const {
   return compare(rhs) >= 0;
 }
 
@@ -377,15 +375,15 @@ constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator+=(Operand rhs) {
 }
 
 template <std::size_t bits>
-constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator+=(const Large_ap_int& rhs) {
+constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator+=(
+    const Large_ap_int& rhs) {
   bool c = false;
-  for(std::size_t i = 0 ; i < words_; ++i) {
+  for (std::size_t i = 0; i < words_; ++i) {
     auto l = v_[i];
-    if(c) {
+    if (c) {
       v_[i] += rhs[i] + 1;
       c = v_[i] <= l;
-    }
-    else {
+    } else {
       v_[i] += rhs[i];
       c = v_[i] < l;
     }
@@ -399,10 +397,10 @@ constexpr Large_ap_int<bits> Large_ap_int<bits>::operator+(Operand rhs) const {
 }
 
 template <std::size_t bits>
-constexpr Large_ap_int<bits> Large_ap_int<bits>::operator+(const Large_ap_int& rhs) const {
+constexpr Large_ap_int<bits> Large_ap_int<bits>::operator+(
+    const Large_ap_int& rhs) const {
   return Large_ap_int<bits>(*this) += rhs;
 }
-
 
 // ************************** SUBTRACTION ************************** //
 template <std::size_t bits>
@@ -431,15 +429,15 @@ constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator-=(Operand rhs) {
 }
 
 template <std::size_t bits>
-constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator-=(const Large_ap_int& rhs) {
+constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator-=(
+    const Large_ap_int& rhs) {
   bool c = false;
-  for(std::size_t i = 0 ; i < words_; ++i) {
+  for (std::size_t i = 0; i < words_; ++i) {
     auto l = v_[i];
-    if(c) {
+    if (c) {
       v_[i] -= rhs[i] + 1;
       c = v_[i] >= l;
-    }
-    else {
+    } else {
       v_[i] -= rhs[i];
       c = v_[i] > l;
     }
@@ -453,7 +451,8 @@ constexpr Large_ap_int<bits> Large_ap_int<bits>::operator-(Operand rhs) const {
 }
 
 template <std::size_t bits>
-constexpr Large_ap_int<bits> Large_ap_int<bits>::operator-(const Large_ap_int& rhs) const {
+constexpr Large_ap_int<bits> Large_ap_int<bits>::operator-(
+    const Large_ap_int& rhs) const {
   return Large_ap_int<bits>(*this) -= rhs;
 }
 
@@ -461,14 +460,13 @@ constexpr Large_ap_int<bits> Large_ap_int<bits>::operator-(const Large_ap_int& r
 
 template <std::size_t bits>
 constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator*=(Operand rhs) {
- 
-  if(rhs == std::numeric_limits<Operand>::min()) {
+  if (rhs == std::numeric_limits<Operand>::min()) {
     // ehhhh. not great...
     *this *= 2;
     return *this *= std::numeric_limits<Operand>::min() / 2;
   }
 
-  if(rhs < 0) {
+  if (rhs < 0) {
     (*this) = -(*this);
     rhs = -rhs;
   }
@@ -478,31 +476,30 @@ constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator*=(Operand rhs) {
   }
 
   Word carry = 0;
-  for(std::size_t i = 0 ; i < words_; ++i) {
+  for (std::size_t i = 0; i < words_; ++i) {
     Word low, mid, high;
     auto src_part = v_[i];
     // [ LOW, HIGH ] = MULTIPLIER * SRC[i] + DST[i] + CARRY.
-    
-    if(src_part == 0 || rhs == 0) {
+
+    if (src_part == 0 || rhs == 0) {
       low = carry;
       high = 0;
-    } 
-    else {
+    } else {
       low = low_half(src_part) * low_half(rhs);
       high = high_half(src_part) * high_half(rhs);
 
       mid = low_half(src_part) * high_half(rhs);
       high += high_half(mid);
       mid <<= bits_per_word_ / 2;
-      if(low + mid < low) {
+      if (low + mid < low) {
         ++high;
       }
       low += mid;
 
       if (low + carry < low) {
-         high++;
-       }
-       low += carry;
+        high++;
+      }
+      low += carry;
     }
     v_[i] = low;
     carry = high;
@@ -516,11 +513,11 @@ constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator*=(Operand rhs) {
 }
 
 template <std::size_t bits>
-constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator*=(const Large_ap_int& rhs) {
+constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator*=(
+    const Large_ap_int& rhs) {
   assert(false);
   return *this;
 }
-
 
 template <std::size_t bits>
 constexpr Large_ap_int<bits> Large_ap_int<bits>::operator*(Operand rhs) const {
@@ -528,7 +525,8 @@ constexpr Large_ap_int<bits> Large_ap_int<bits>::operator*(Operand rhs) const {
 }
 
 template <std::size_t bits>
-constexpr Large_ap_int<bits> Large_ap_int<bits>::operator*(const Large_ap_int& rhs) const {
+constexpr Large_ap_int<bits> Large_ap_int<bits>::operator*(
+    const Large_ap_int& rhs) const {
   return Large_ap_int<bits>(*this) *= rhs;
 }
 
@@ -541,9 +539,24 @@ constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator/=(Operand rhs) {
 }
 
 template <std::size_t bits>
+constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator/=(
+    const Large_ap_int& rhs) {
+  assert(false);
+  return *this;
+}
+
+template <std::size_t bits>
 constexpr Large_ap_int<bits> Large_ap_int<bits>::operator/(Operand rhs) const {
   return Large_ap_int<bits>(*this) /= rhs;
 }
+
+template <std::size_t bits>
+constexpr Large_ap_int<bits> Large_ap_int<bits>::operator/(
+    const Large_ap_int& rhs) const {
+  return Large_ap_int<bits>(*this) /= rhs;
+}
+
+// ************************** MODULO ************************** //
 
 template <std::size_t bits>
 constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator%=(Operand rhs) {
@@ -552,9 +565,24 @@ constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator%=(Operand rhs) {
 }
 
 template <std::size_t bits>
+constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator%=(
+    const Large_ap_int& rhs) {
+  assert(false);
+  return *this;
+}
+
+template <std::size_t bits>
 constexpr Large_ap_int<bits> Large_ap_int<bits>::operator%(Operand rhs) const {
   return Large_ap_int<bits>(*this) %= rhs;
 }
+
+template <std::size_t bits>
+constexpr Large_ap_int<bits> Large_ap_int<bits>::operator%(
+    const Large_ap_int& rhs) const {
+  return Large_ap_int<bits>(*this) %= rhs;
+}
+
+// ************************** BINARY AND ************************** //
 
 template <std::size_t bits>
 constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator&=(
@@ -567,16 +595,42 @@ constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator&=(
 }
 
 template <std::size_t bits>
+constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator&=(
+    const Large_ap_int& rhs) {
+  for (std::size_t i = 0; i < words; ++i) {
+    v_[i] &= rhs.v_[i];
+  }
+  return *this;
+}
+
+template <std::size_t bits>
 constexpr Large_ap_int<bits> Large_ap_int<bits>::operator&(
     Unsigned_operand rhs) const {
   return Large_ap_int<bits>(*this) &= rhs;
 }
 
 template <std::size_t bits>
-constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator|=(Unsigned_operand) {
+constexpr Large_ap_int<bits> Large_ap_int<bits>::operator&(
+    const Large_ap_int& rhs) const {
+  return Large_ap_int<bits>(*this) &= rhs;
+}
+
+// ************************** BINARY OR ************************** //
+
+template <std::size_t bits>
+constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator|=(Unsigned_operand rhs) {
   v_[0] |= rhs;
   return *this;
 }
+
+template <std::size_t bits>
+constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator|=(const Large_ap_int& rhs) {
+  for (std::size_t i = 0; i < words; ++i) {
+    v_[i] |= rhs.v_[i];
+  }
+  return *this;
+}
+
 
 template <std::size_t bits>
 constexpr Large_ap_int<bits> Large_ap_int<bits>::operator|(
@@ -585,7 +639,15 @@ constexpr Large_ap_int<bits> Large_ap_int<bits>::operator|(
 }
 
 template <std::size_t bits>
-constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator^=(Unsigned_operand) {
+constexpr Large_ap_int<bits> Large_ap_int<bits>::operator|(
+    const Large_ap_int& rhs) const {
+  return Large_ap_int<bits>(*this) |= rhs;
+}
+
+// ************************** BINARY XOR ************************** //
+
+template <std::size_t bits>
+constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator^=(Unsigned_operand rhs) {
   v_[0] ^= rhs;
   for (std::size_t i = 1; i < words; ++i) {
     v_[i] ^= Word(0);
@@ -595,11 +657,26 @@ constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator^=(Unsigned_operand) {
 }
 
 template <std::size_t bits>
+constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator^=(const Large_ap_int& rhs) {
+  for (std::size_t i = 0; i < words; ++i) {
+    v_[i] ^= rhs.v_[i];
+  }
+  return *this;
+}
+
+template <std::size_t bits>
 constexpr Large_ap_int<bits> Large_ap_int<bits>::operator^(
     Unsigned_operand rhs) const {
   return Large_ap_int<bits>(*this) ^= rhs;
 }
 
+template <std::size_t bits>
+constexpr Large_ap_int<bits> Large_ap_int<bits>::operator^(
+    const Large_ap_int& rhs) const {
+  return Large_ap_int<bits>(*this) ^= rhs;
+}
+
+// ************************** Output to stream ************************** //
 template <std::size_t bits>
 constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator<<=(
     Unsigned_operand rhs) {

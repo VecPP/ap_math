@@ -8,8 +8,8 @@
 #ifndef VECPP_AP_INT_INCLUDED_H
 #define VECPP_AP_INT_INCLUDED_H
 
-#include "ap_int/simple.h"
-#include "ap_int/composed.h"
+#include "ap_int/small.h"
+#include "ap_int/large.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -27,47 +27,28 @@ namespace vecpp {
   
   template<std::size_t bits, typename Enable=void>
   struct Ap_int_selector {
-    using type = Composed_ap_int_impl<bits>;
+    using type = Large_ap_int<bits>;
   };
 
   template<std::size_t bits>
-  struct Ap_int_selector<bits, std::enable_if_t<(bits < 8)>> {
-    using type = Simple_ap_int_impl<bits, std::uint8_t>;
-  };
-
-  template<>
-  struct Ap_int_selector<8, void> {
-    using type = std::int8_t;
+  struct Ap_int_selector<bits, std::enable_if_t<(bits <= 8)>> {
+    using type = Small_ap_int<bits, std::int8_t>;
   };
 
   template<std::size_t bits>
-  struct Ap_int_selector<bits, std::enable_if_t<(bits > 8 && bits < 16)>> {
-    using type = Simple_ap_int_impl<bits, std::uint16_t>;
-  };
-
-  template<>
-  struct Ap_int_selector<16, void> {
-    using type = std::int16_t;
+  struct Ap_int_selector<bits, std::enable_if_t<(bits > 8 && bits <= 16)>> {
+    using type = Small_ap_int<bits, std::int16_t>;
   };
 
   template<std::size_t bits>
-  struct Ap_int_selector<bits, std::enable_if_t<(bits > 16 && bits < 32)>> {
-    using type = Simple_ap_int_impl<bits, std::uint32_t>;
+  struct Ap_int_selector<bits, std::enable_if_t<(bits > 16 && bits <= 32)>> {
+    using type = Small_ap_int<bits, std::int32_t>;
   };
 
-  template<>
-  struct Ap_int_selector<32, void> {
-    using type = std::int32_t;
-  };
 
   template<std::size_t bits>
-  struct Ap_int_selector<bits, std::enable_if_t<(bits > 32 && bits < 64)>> {
-    using type = Simple_ap_int_impl<bits, std::uint64_t>;
-  };
-
-  template<>
-  struct Ap_int_selector<64, void> {
-    using type = std::int64_t;
+  struct Ap_int_selector<bits, std::enable_if_t<(bits > 32 && bits <= 64)>> {
+    using type = Small_ap_int<bits, std::int64_t>;
   };
 
   template<std::size_t bits>

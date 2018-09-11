@@ -1,16 +1,17 @@
 #include "ap_int.h"
 
 #include <iostream>
+#include <iomanip>
 
 int main() {
+  int64_t init = 0xFFFFFFFFFFFFFFFF;
 
-  vecpp::Ap_int<120> a{0xFFFFFFFF};
-  vecpp::Ap_int<120> b{0xFFFFFFFF};
+  vecpp::Ap_int<66> a{300};
+  vecpp::Ap_int<66> b{11};
 
-  for(int i = 0 ; i < 20; ++i) {
-    a += b;
-    std::cout << a << "\n";
-  }
+  auto [res, rem] = udivmod(a, b);
+//  std::cout << a.count_leading_zeros() << "\n";
+  std::cout << res.v_[0] << " " << rem.v_[0] << "\n";
 
   return 0;
 }

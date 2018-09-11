@@ -14,7 +14,7 @@ namespace vecpp {
   
   // APFloats are always binary
   // APFloats are always signed
-  // Ap_float<11, 85 is a IEEE754 half
+  // Ap_float<11, 5 is a IEEE754 half
   // Ap_float<24, 8> is a IEEE754 float
   // Ap_float<53, 11> is a IEEE754 double
   template<std::size_t mantissa_bits, std::size_t exponent_bits>

@@ -9,6 +9,12 @@ TEST_CASE("construct ApInt", "[apint]") {
   (void)x;
 }
 
+TEST_CASE("construct ApInt from string", "[apint]") {
+  REQUIRE(Int80_t("1234") == Int80_t{1234});
+   REQUIRE(Int80_t("-1234") == Int80_t{-1234});
+   REQUIRE(Int80_t("00123") == Int80_t{123});
+}
+
 TEST_CASE("compare ApInt", "[apint]") {
   Int80_t x{25};
   Int80_t y{25};
@@ -142,14 +148,13 @@ TEST_CASE("apint += raw", "[apint]") {
     REQUIRE(x == Int80_t(5));
   }
 
-  { 
+  {
     Int80_t x{0};
     std::int64_t v = std::numeric_limits<std::int64_t>::min();
 
     x += v;
     Int80_t expected(v);
     REQUIRE(x == expected);
-
   }
 }
 
@@ -158,6 +163,9 @@ TEST_CASE("apint << raw", "[apint]") {
     REQUIRE(Int80_t{0} << 20 == Int80_t{0});
 
     REQUIRE(Int80_t{1} << 2 == Int80_t{4});
+
+    REQUIRE(Int80_t{12} << 0 == Int80_t{12 << 0});
+    REQUIRE(Int80_t{12} << 1 == Int80_t{12 << 1});
   }
 }
 
@@ -171,7 +179,7 @@ TEST_CASE("apint >> raw", "[apint]") {
 
       REQUIRE(Int80_t{-200} >> 2 == Int80_t{ref});
     }
-    
+
     {
       std::int64_t ref = std::numeric_limits<std::int64_t>::min() + 200;
       Int80_t test{ref};
@@ -192,15 +200,41 @@ TEST_CASE("apint >> raw", "[apint]") {
 }
 
 TEST_CASE("apint + apint", "[apint]") {
-  Int80_t large {std::numeric_limits<std::int64_t>::max() };
+  Int80_t large{std::numeric_limits<std::int64_t>::max()};
 
-    
   REQUIRE((large + large) + (large + large) == large + large + large + large);
 }
 
 TEST_CASE("apint * scalar", "[apint]") {
-  
-  REQUIRE(Int80_t{3} * 4 == Int80_t{12}); 
+  REQUIRE(Int80_t{3} * 4 == Int80_t{12});
   REQUIRE(Int80_t{-3} * 4 == Int80_t{-12});
   REQUIRE(Int80_t{3} * -4 == Int80_t{-12});
+
+  REQUIRE(Int80_t{9223372036} * 10 == Int80_t{92233720360});
+}
+
+TEST_CASE("apint * apint ", "[apint]") {
+  REQUIRE(Int80_t{3} * Int80_t{4} == Int80_t{12});
+  REQUIRE(Int80_t{-3} * Int80_t{4} == Int80_t{-12});
+  REQUIRE(Int80_t{3} * Int80_t{-4} == Int80_t{-12});
+
+  REQUIRE(Int80_t{"92233720368547758070"} * Int80_t{100} ==
+          Int80_t{"9223372036854775807000"});
+}
+
+TEST_CASE("apint / apint ", "[apint]") {
+  REQUIRE(Int80_t{"92233720368547758070"} / Int80_t{100} ==
+          Int80_t{"922337203685477580"});
+  REQUIRE(Int80_t{"-92233720368547758070"} / Int80_t{100} ==
+          Int80_t{"-922337203685477580"});
+  REQUIRE(Int80_t{"-92233720368547758070"} / Int80_t{-100} ==
+          Int80_t{"922337203685477580"});
+  REQUIRE(Int80_t{"-92233720368547758070"} / Int80_t{100} ==
+        Int80_t{"-922337203685477580"});
+}
+
+TEST_CASE("apint % apint ", "[apint]") {
+  REQUIRE(Int80_t{"92233720368547758071"} % Int80_t{2} ==
+          Int80_t{1});
+  REQUIRE(Int80_t{"92233720368547758070"} % Int80_t{2} == Int80_t{0});
 }

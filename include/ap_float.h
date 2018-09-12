@@ -22,11 +22,18 @@ namespace vecpp {
     static_assert(mantissa_bits > 1);
     static_assert(exponent_bits > 1);
     
+    constexpr Ap_float& operator+=(const Ap_float& rhs);
+
   private:
     // The sign of the mantissa is the sign of the value.
     Ap_int<mantissa_bits> mantissa;
     Ap_int<exponent_bits> exponent;
   };
+
+  template<std::size_t M, std::size_t E>
+  constexpr Ap_float<M, E>& Ap_float<M, E>::operator+=(const Ap_float& rhs) {
+    return *this;
+  }
 }
 
 #endif

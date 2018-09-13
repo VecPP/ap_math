@@ -8,7 +8,7 @@
 #ifndef VECPP_AP_FLOAT_INCLUDED_H
 #define VECPP_AP_FLOAT_INCLUDED_H
 
-#include "vecpp/ap_int.h"
+#include "vecpp/ap_math//ap_int.h"
 
 namespace vecpp {
   

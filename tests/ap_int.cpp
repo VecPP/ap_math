@@ -1,6 +1,6 @@
 #include "catch.hpp"
 
-#include "ap_int.h"
+#include "vecpp/ap_math/ap_int.h"
 
 using Int80_t = vecpp::Ap_int<80>;
 

@@ -8,8 +8,8 @@
 #ifndef VECPP_AP_INT_INCLUDED_H
 #define VECPP_AP_INT_INCLUDED_H
 
-#include "ap_int/small.h"
-#include "ap_int/large.h"
+#include "vecpp/ap_math/ap_int/small.h"
+#include "vecpp/ap_math/ap_int/large.h"
 
 #include <cstddef>
 #include <cstdint>

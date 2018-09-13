@@ -55,10 +55,11 @@ namespace vecpp {
     }
 
   private:
-    Storage v : bits;
+    Storage v_ : bits;
 
+    template<std::size_t b, typename S>
     friend std::ostream& operator<<(std::ostream& stream,
-                                    Small_ap_int val);
+                                    Small_ap_int<b,S> val);
   };
 
 

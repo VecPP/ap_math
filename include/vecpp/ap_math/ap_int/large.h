@@ -784,7 +784,7 @@ template <std::size_t bits>
 constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator&=(
     Unsigned_operand rhs) {
   v_[0] &= rhs;
-  for (std::size_t i = 1; i < words; ++i) {
+  for (std::size_t i = 1; i < words_; ++i) {
     v_[i] = 0;
   }
   return *this;
@@ -793,7 +793,7 @@ constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator&=(
 template <std::size_t bits>
 constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator&=(
     const Large_ap_int& rhs) {
-  for (std::size_t i = 0; i < words; ++i) {
+  for (std::size_t i = 0; i < words_; ++i) {
     v_[i] &= rhs.v_[i];
   }
   return *this;
@@ -823,7 +823,7 @@ constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator|=(
 template <std::size_t bits>
 constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator|=(
     const Large_ap_int& rhs) {
-  for (std::size_t i = 0; i < words; ++i) {
+  for (std::size_t i = 0; i < words_; ++i) {
     v_[i] |= rhs.v_[i];
   }
   return *this;
@@ -847,7 +847,7 @@ template <std::size_t bits>
 constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator^=(
     Unsigned_operand rhs) {
   v_[0] ^= rhs;
-  for (std::size_t i = 1; i < words; ++i) {
+  for (std::size_t i = 1; i < words_; ++i) {
     v_[i] ^= Word(0);
   }
   clear_unused_bits();
@@ -857,7 +857,7 @@ constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator^=(
 template <std::size_t bits>
 constexpr Large_ap_int<bits>& Large_ap_int<bits>::operator^=(
     const Large_ap_int& rhs) {
-  for (std::size_t i = 0; i < words; ++i) {
+  for (std::size_t i = 0; i < words_; ++i) {
     v_[i] ^= rhs.v_[i];
   }
   return *this;

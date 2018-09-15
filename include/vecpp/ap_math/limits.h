@@ -22,8 +22,10 @@ struct numeric_limits<vecpp::Small_ap_int<bits>>
 
   using T = vecpp::Small_ap_int<bits>;
 
+  // is_modulo is inherited from the underlying type here.
+
   static constexpr int digits = bits;
-  static constexpr int digits10 = digits * 0.301029995663981195213738894724493026768189881462108541310;
+  static constexpr int digits10 = digits * 643L / 2136;
 
   static constexpr T min() { return T{1} << (bits - 1); }
   static constexpr T lowest() { return min(); }
@@ -38,7 +40,7 @@ struct numeric_limits<vecpp::Large_ap_int<bits>>
   static constexpr bool is_modulo = true;
 
   static constexpr int digits = bits;
-  static constexpr int digits10 = digits * 0.301029995663981195213738894724493026768189881462108541310;
+  static constexpr int digits10 = digits * 643L / 2136;
 
   static constexpr T min() { return T{1} << (bits - 1); }
   static constexpr T lowest() { return min(); }

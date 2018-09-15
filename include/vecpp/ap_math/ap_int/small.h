@@ -8,71 +8,134 @@
 #ifndef VECPP_AP_INT_SMALL_INCLUDED_H
 #define VECPP_AP_INT_SMALL_INCLUDED_H
 
+#include <climits>
 #include <cstddef>
 #include <cstdint>
-#include <climits>
-#include <type_traits>
 #include <iostream>
+#include <type_traits>
 
 namespace vecpp {
-    // This is really simple. An AP int 
-  template<std::size_t bits, typename Storage>
-  struct Small_ap_int {
-    static_assert(bits > 1);
-    static_assert(bits <= sizeof(Storage) * CHAR_BIT);
-    static_assert(std::is_integral_v<Storage>);
-    static_assert(std::is_unsigned_v<Storage>);
 
-    static constexpr std::size_t storage_bits = sizeof(Storage) * CHAR_BIT;
+namespace detail {
+template <std::size_t bits, typename Enable = void>
+struct Small_storage_selector {
+  using type = std::int64_t;
+};
 
-    constexpr Small_ap_int() = default;
-    constexpr Small_ap_int(Storage v) : v_(v) {}
-    constexpr Small_ap_int(const Small_ap_int&) = default;
-    constexpr Small_ap_int& operator=(const Small_ap_int&) = default;
+template <std::size_t bits>
+struct Small_storage_selector<bits, std::enable_if_t<(bits <= 8)>> {
+  using type = std::int8_t;
+};
 
-    constexpr bool operator==(const Small_ap_int& rhs) const {
-      return v_ == rhs.v_;
-    }
+template <std::size_t bits>
+struct Small_storage_selector<bits,
+                              std::enable_if_t<(bits > 8 && bits <= 16)>> {
+  using type = std::int16_t;
+};
 
-    constexpr bool operator!=(const Small_ap_int& rhs) const {
-      return v_ != rhs.v_;
-    }
+template <std::size_t bits>
+struct Small_storage_selector<bits,
+                              std::enable_if_t<(bits > 16 && bits <= 32)>> {
+  using type = std::int32_t;
+};
+}
 
-    constexpr bool operator>(const Small_ap_int& rhs) const {
-      return v_ > rhs.v_;
-    }
+// For Integer values < than the system's representable integers,
+// we just just bitfields, and let the compiler take it from there.
+template <std::size_t bits>
+struct Small_ap_int {
+  static_assert(bits > 1 && bits <= 64);
+ private:
+  using Storage = typename detail::Small_storage_selector<bits>::type;
+  using Self = Small_ap_int; // This is just so that we can write one-liners.
+  using Op = Storage;
+  using UOp =  std::make_signed_t<Op>;
+ public:
 
-    constexpr bool operator<(const Small_ap_int& rhs) const {
-      return v_ < rhs.v_;
-    }
+  constexpr Small_ap_int() = default;
+  constexpr Small_ap_int(Storage v) : v_(v) {}
+  constexpr Small_ap_int(const Small_ap_int&) = default;
+  constexpr Small_ap_int& operator=(const Small_ap_int&) = default;
 
-    constexpr bool operator>=(const Small_ap_int& rhs) const {
-      return v_ >= rhs.v_;
-    }
+  constexpr bool operator==(const Self& rhs) const { return v_ == rhs.v_; }
+  constexpr bool operator!=(const Self& rhs) const { return v_ != rhs.v_; }
+  constexpr bool operator>(const Self& rhs) const { return v_ > rhs.v_; }
+  constexpr bool operator<(const Self& rhs) const { return v_ < rhs.v_; }
+  constexpr bool operator>=(const Self& rhs) const { return v_ >= rhs.v_; }
+  constexpr bool operator<=(const Self& rhs) const { return v_ <= rhs.v_; }
 
-    constexpr bool operator<=(const Small_ap_int& rhs) const {
-      return v_ <= rhs.v_;
-    }
+  constexpr bool operator==(const Op& rhs) const { return v_ == rhs; }
+  constexpr bool operator!=(const Op& rhs) const { return v_ != rhs; }
+  constexpr bool operator>(const Op& rhs) const { return v_ > rhs; }
+  constexpr bool operator<(const Op& rhs) const { return v_ < rhs; }
+  constexpr bool operator>=(const Op& rhs) const { return v_ >= rhs; }
+  constexpr bool operator<=(const Op& rhs) const { return v_ <= rhs; }
 
-  private:
-    Storage v_ : bits;
+  constexpr Self operator+() const { return +v_; }
+  constexpr Self operator-() const { return -v_; }
+  constexpr Self operator~() const { return ~v_; }
+  constexpr Self& operator++() { return ++v_; }
+  constexpr Self operator++(int) { return v_++; }
+  constexpr Self& operator--() { return --v_; }
+  constexpr Self operator--(int) { return v_--; }
 
-    template<std::size_t b, typename S>
-    friend std::ostream& operator<<(std::ostream& stream,
-                                    Small_ap_int<b,S> val);
-  };
+  constexpr Self& operator+=(const Self& rhs) {return v_ += rhs.v_;}
+  constexpr Self& operator-=(const Self& rhs) {return v_ -= rhs.v_;}
+  constexpr Self& operator*=(const Self& rhs) {return v_ *= rhs.v_;}
+  constexpr Self& operator/=(const Self& rhs) {return v_ /= rhs.v_;}
+  constexpr Self& operator%=(const Self& rhs) {return v_ %= rhs.v_;}
+  constexpr Self& operator&=(const Self& rhs) {return v_ &= rhs.v_;}
+  constexpr Self& operator|=(const Self& rhs) {return v_ |= rhs.v_;}
+  constexpr Self& operator^=(const Self& rhs) {return v_ ^= rhs.v_;}
 
+  constexpr Self operator+(const Self& rhs) const {return v_ + rhs.v_;}
+  constexpr Self operator-(const Self& rhs) const {return v_ - rhs.v_;}
+  constexpr Self operator*(const Self& rhs) const {return v_ * rhs.v_;}
+  constexpr Self operator/(const Self& rhs) const {return v_ / rhs.v_;}
+  constexpr Self operator%(const Self& rhs) const {return v_ % rhs.v_;}
+  constexpr Self operator&(const Self& rhs) const {return v_ & rhs.v_;}
+  constexpr Self operator|(const Self& rhs) const {return v_ | rhs.v_;}
+  constexpr Self operator^(const Self& rhs) const {return v_ ^ rhs.v_;}
 
-  template<std::size_t bits, typename Storage>
-  std::ostream& operator<<(std::ostream& stream,
-                           Small_ap_int<bits, Storage> val) {
-    if constexpr(std::is_same_v<Storage, std::int8_t> || std::is_same_v<Storage, char>) {
+  constexpr Self& operator+=(const Op& rhs) {return v_ += v_;}
+  constexpr Self& operator-=(const Op& rhs) {return v_ -= v_;}
+  constexpr Self& operator*=(const Op& rhs) {return v_ *= v_;}
+  constexpr Self& operator/=(const Op& rhs) {return v_ /= v_;}
+  constexpr Self& operator%=(const Op& rhs) {return v_ %= v_;}
+  constexpr Self& operator&=(const Op& rhs) {return v_ &= v_;}
+  constexpr Self& operator|=(const Op& rhs) {return v_ |= v_;}
+  constexpr Self& operator^=(const Op& rhs) {return v_ ^= v_;}
+
+  constexpr Self operator+(const Op& rhs) const {return v_ + rhs;}
+  constexpr Self operator-(const Op& rhs) const {return v_ - rhs;}
+  constexpr Self operator*(const Op& rhs) const {return v_ * rhs;}
+  constexpr Self operator/(const Op& rhs) const {return v_ / rhs;}
+  constexpr Self operator%(const Op& rhs) const {return v_ % rhs;}
+  constexpr Self operator&(const Op& rhs) const {return v_ & rhs;}
+  constexpr Self operator|(const Op& rhs) const {return v_ | rhs;}
+  constexpr Self operator^(const Op& rhs) const {return v_ ^ rhs;}
+
+  constexpr Self operator<<(Op arg) const { return v_ << arg; }
+  constexpr Self operator>>(Op arg) const { return v_ >> arg; }
+
+ private:
+  Storage v_ : bits;
+
+  template <std::size_t b>
+  friend std::ostream& operator<<(std::ostream& stream, Small_ap_int<b> val);
+};
+
+template <std::size_t bits>
+std::ostream& operator<<(std::ostream& stream, Small_ap_int<bits> val) {
+  using Storage = typename Small_ap_int<bits>::Storage;
+  if
+    constexpr(std::is_same_v<Storage, std::int8_t>) {
       return stream << (int)val.v_;
     }
-    else {
-      return stream << val.v_;
-    }
+  else {
+    return stream << val.v_;
   }
+}
 }
 
 #endif

@@ -31,24 +31,8 @@ namespace vecpp {
   };
 
   template<std::size_t bits>
-  struct Ap_int_selector<bits, std::enable_if_t<(bits <= 8)>> {
-    using type = Small_ap_int<bits, std::int8_t>;
-  };
-
-  template<std::size_t bits>
-  struct Ap_int_selector<bits, std::enable_if_t<(bits > 8 && bits <= 16)>> {
-    using type = Small_ap_int<bits, std::int16_t>;
-  };
-
-  template<std::size_t bits>
-  struct Ap_int_selector<bits, std::enable_if_t<(bits > 16 && bits <= 32)>> {
-    using type = Small_ap_int<bits, std::int32_t>;
-  };
-
-
-  template<std::size_t bits>
-  struct Ap_int_selector<bits, std::enable_if_t<(bits > 32 && bits <= 64)>> {
-    using type = Small_ap_int<bits, std::int64_t>;
+  struct Ap_int_selector<bits, std::enable_if_t<(bits <= 64)>> {
+    using type = Small_ap_int<bits>;
   };
 
   template<std::size_t bits>

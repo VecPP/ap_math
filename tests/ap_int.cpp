@@ -31,6 +31,9 @@ TEST_CASE("apint unary + and -", "[apint]") {
   REQUIRE(+x == x);
   REQUIRE(-x == y);
   REQUIRE(-y == x);
+
+  Int80_t smallest = Int80_t{1} << 79 ;
+  REQUIRE(-smallest == smallest);
 }
 
 TEST_CASE("apint unary ~", "[apint]") {

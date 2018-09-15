@@ -6,6 +6,7 @@ using Int80_t = vecpp::Ap_int<80>;
 
 TEST_CASE("construct ApInt", "[apint]") {
   Int80_t x{25};
+
   (void)x;
 }
 
@@ -13,6 +14,9 @@ TEST_CASE("construct ApInt from string", "[apint]") {
   REQUIRE(Int80_t("1234") == Int80_t{1234});
    REQUIRE(Int80_t("-1234") == Int80_t{-1234});
    REQUIRE(Int80_t("00123") == Int80_t{123});
+
+   constexpr Int80_t x("5678");
+   (void)x;
 }
 
 TEST_CASE("compare ApInt", "[apint]") {

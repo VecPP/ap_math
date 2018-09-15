@@ -172,7 +172,7 @@ struct Large_ap_int {
 };
 
 template <std::size_t bits>
-constexpr Large_ap_int<bits>::Large_ap_int(Operand v) {
+constexpr Large_ap_int<bits>::Large_ap_int(Operand v) : v_{0} {
   if (v < 0) {
     v_[0] = -v;
     for (std::size_t i = 1; i < words_; ++i) {
@@ -188,8 +188,7 @@ constexpr Large_ap_int<bits>::Large_ap_int(Operand v) {
 }
 
 template <std::size_t bits>
-constexpr Large_ap_int<bits>::Large_ap_int(std::string_view v) {
-  std::fill(v_.begin(), v_.end(), 0);
+constexpr Large_ap_int<bits>::Large_ap_int(std::string_view v) : v_{0} {
   if (v.empty()) {
     return;
   }
@@ -506,7 +505,7 @@ constexpr Large_ap_int<bits> Large_ap_int<bits>::unsigned_mul(Word rhs) const {
 
   Word carry = 0;
   for (std::size_t i = 0; i < words_; ++i) {
-    Word low, mid, high;
+    Word low = 0, mid = 0, high = 0;
     auto src_part = v_[i];
     // [ LOW, HIGH ] = MULTIPLIER * SRC[i] + DST[i] + CARRY.
 
@@ -684,7 +683,7 @@ Large_ap_int<bits>::udivmod(const Large_ap_int<bits>& denum) const {
       if (comp == 0) {
         break;
       }
-    } 
+    }
     --shift;
     divisor >>= 1;
   }

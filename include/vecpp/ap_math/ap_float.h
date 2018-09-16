@@ -30,6 +30,8 @@ namespace vecpp {
     constexpr bool operator>(const Ap_float&) const;
     constexpr bool operator>=(const Ap_float&) const;
 
+    constexpr Ap_float operator+() const;
+    constexpr Ap_float operator-() const;
 
   private:
 
@@ -140,6 +142,17 @@ namespace vecpp {
     return !(*this == rhs);
   }
 
+  template<std::size_t M, std::size_t E>
+  constexpr Ap_float Ap_float<M, E>::operator+() const {
+    return *this;
+  }
+
+  template<std::size_t M, std::size_t E>
+  constexpr Ap_float Ap_float<M, E>::operator-() const {
+    Ap_float result = *this;
+    result.m_ = -result.m_;
+    return result;
+  }
 }
 
 #endif

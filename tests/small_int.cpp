@@ -1,7 +1,6 @@
 #include "catch.hpp"
 
-#include "vecpp/ap_math/ap_int.h"
-#include "vecpp/ap_math/limits.h"
+#include "vecpp/ap_math.h"
 
 using Int4_t = vecpp::Ap_int<4>;
 

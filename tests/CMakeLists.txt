@@ -4,7 +4,7 @@ add_library(catch_main catch_main.cpp)
 set_target_properties(catch_main PROPERTIES FOLDER "tests")
 
 SET( AP_MATH_TESTS
-  ap_int.cpp
+  large_int.cpp
   small_int.cpp
 )
 

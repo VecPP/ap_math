@@ -1,6 +1,6 @@
 #include "catch.hpp"
 
-#include "vecpp/ap_math/ap_int.h"
+#include "vecpp/ap_math.h"
 
 using Int80_t = vecpp::Ap_int<80>;
 
@@ -12,11 +12,11 @@ TEST_CASE("construct ApInt", "[apint]") {
 
 TEST_CASE("construct ApInt from string", "[apint]") {
   REQUIRE(Int80_t("1234") == Int80_t{1234});
-   REQUIRE(Int80_t("-1234") == Int80_t{-1234});
-   REQUIRE(Int80_t("00123") == Int80_t{123});
+  REQUIRE(Int80_t("-1234") == Int80_t{-1234});
+  REQUIRE(Int80_t("00123") == Int80_t{123});
 
-   constexpr Int80_t x("5678");
-   (void)x;
+  constexpr Int80_t x("5678");
+  (void)x;
 }
 
 TEST_CASE("compare ApInt", "[apint]") {
@@ -36,8 +36,7 @@ TEST_CASE("apint unary + and -", "[apint]") {
   REQUIRE(-x == y);
   REQUIRE(-y == x);
 
-  Int80_t smallest = Int80_t{1} << 79 ;
-  REQUIRE(-smallest == smallest);
+  REQUIRE(-std::numeric_limits<Int80_t>::min() == std::numeric_limits<Int80_t>::min());
 }
 
 TEST_CASE("apint unary ~", "[apint]") {
@@ -210,6 +209,8 @@ TEST_CASE("apint + apint", "[apint]") {
   Int80_t large{std::numeric_limits<std::int64_t>::max()};
 
   REQUIRE((large + large) + (large + large) == large + large + large + large);
+
+  REQUIRE(std::numeric_limits<Int80_t>::max() + 1 == std::numeric_limits<Int80_t>::min());
 }
 
 TEST_CASE("apint * scalar", "[apint]") {
@@ -237,11 +238,10 @@ TEST_CASE("apint / apint ", "[apint]") {
   REQUIRE(Int80_t{"-92233720368547758070"} / Int80_t{-100} ==
           Int80_t{"922337203685477580"});
   REQUIRE(Int80_t{"-92233720368547758070"} / Int80_t{100} ==
-        Int80_t{"-922337203685477580"});
+          Int80_t{"-922337203685477580"});
 }
 
 TEST_CASE("apint % apint ", "[apint]") {
-  REQUIRE(Int80_t{"92233720368547758071"} % Int80_t{2} ==
-          Int80_t{1});
+  REQUIRE(Int80_t{"92233720368547758071"} % Int80_t{2} == Int80_t{1});
   REQUIRE(Int80_t{"92233720368547758070"} % Int80_t{2} == Int80_t{0});
 }

@@ -5,9 +5,18 @@
 using Int80_t = vecpp::Ap_int<80>;
 
 TEST_CASE("construct ApInt", "[apint]") {
-  Int80_t x{25};
-
+  Int80_t x{24};
   (void)x;
+}
+
+TEST_CASE("construct ApInt from min int64_t", "[apint]") {
+
+  Int80_t v{std::numeric_limits<std::int64_t>::min()};
+
+  REQUIRE(v < 0);
+
+  REQUIRE(v == std::numeric_limits<std::int64_t>::min());
+
 }
 
 TEST_CASE("construct ApInt from string", "[apint]") {
@@ -15,8 +24,8 @@ TEST_CASE("construct ApInt from string", "[apint]") {
   REQUIRE(Int80_t("-1234") == Int80_t{-1234});
   REQUIRE(Int80_t("00123") == Int80_t{123});
 
-  constexpr Int80_t x("5678");
-  (void)x;
+//  constexpr Int80_t x("5678");
+  //(void)x;
 }
 
 TEST_CASE("compare ApInt", "[apint]") {
@@ -28,7 +37,17 @@ TEST_CASE("compare ApInt", "[apint]") {
   REQUIRE(x != z);
 }
 
-TEST_CASE("apint unary + and -", "[apint]") {
+
+TEST_CASE("apint unary ~", "[apint]") {
+  Int80_t x{0};
+  Int80_t y{-1};
+
+  REQUIRE(~x == y);
+  REQUIRE(~y == x);
+}
+
+
+TEST_CASE("apint unary + and -", "[apint][unary]") {
   Int80_t x{25};
   Int80_t y{-25};
 
@@ -39,13 +58,6 @@ TEST_CASE("apint unary + and -", "[apint]") {
   REQUIRE(-std::numeric_limits<Int80_t>::min() == std::numeric_limits<Int80_t>::min());
 }
 
-TEST_CASE("apint unary ~", "[apint]") {
-  Int80_t x{0};
-  Int80_t y{-1};
-
-  REQUIRE(~x == y);
-  REQUIRE(~y == x);
-}
 
 TEST_CASE("apint comparisons", "[apint]") {
   Int80_t a{-2};
@@ -244,4 +256,22 @@ TEST_CASE("apint / apint ", "[apint]") {
 TEST_CASE("apint % apint ", "[apint]") {
   REQUIRE(Int80_t{"92233720368547758071"} % Int80_t{2} == Int80_t{1});
   REQUIRE(Int80_t{"92233720368547758070"} % Int80_t{2} == Int80_t{0});
+}
+
+TEST_CASE("ostream << apint ", "[apint]") {
+
+  {
+    std::ostringstream stream;
+    Int80_t data{"92233720368547758071"};
+    stream << data;
+    REQUIRE(stream.str() == "92233720368547758071");
+  }
+
+  {
+    std::ostringstream stream;
+    Int80_t data{"-92233720368547758071"};
+    stream << data;
+    REQUIRE(stream.str() == "-92233720368547758071");
+  }
+
 }

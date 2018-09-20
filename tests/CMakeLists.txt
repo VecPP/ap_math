@@ -5,7 +5,9 @@ set_target_properties(catch_main PROPERTIES FOLDER "tests")
 
 SET( AP_MATH_TESTS
   large_int.cpp
+  large_uint.cpp
   small_int.cpp
+  ap_float.cpp
 )
 
 MACRO(config_test_target TGT)
